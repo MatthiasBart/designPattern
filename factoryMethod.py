@@ -1,9 +1,9 @@
 # Factory-Class-Beispiel
 
 # Connection-Klassen:
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
-class Database(ABC):
+class Database():
     def __init__(self, path):
         self.path = path
         self.conn()

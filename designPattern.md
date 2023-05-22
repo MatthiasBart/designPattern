@@ -5,7 +5,7 @@ Die folgende Auflistung besteht aus den folgenden kurz angeführten Design Patte
 1. Factory Method/Fabrikmethode
 2. Singleton
 3. Multiton
-4. 
+4. Erbauer
 
 ## Fabrikmethode 
 ### Überblick 
@@ -287,6 +287,137 @@ printet folgende Ausgabe:
 True True True None
 True None True True
 ```
-## Hürden/Abgrenzungen 
+### Hürden/Abgrenzungen 
 Es ist wieder schwer dies über eine statische Methode zu implementieren, da das verhalten eines privaten Konstruktors nicht einfach umzusetzen ist. 
+
+## Erbauer
+### Überblick 
+Die Erbauer Klasse ist sinnvoll zu implementieren, sollten wir viele Überladungen des Konstruktors einer bestimmten Klasse haben. Ziel dieses Musters ist es Daten nach und nach hinzuzufügen und aus diesen anschließend ein Produkt zu bauen. Dazu werden folgende Akteure verwendet:
+
+- Direktor: ist für die Konstruktion des Produkts zuständig und hält die Daten
+- Erbauer: ist für die Umsetzung der Konstruktion verantwortlich und wird als abstrakte Basisklasse implemntiert
+- Konkreter Erbauer: ist für die konkrete Umsetzung der Konstruktion verantwortlich
+- Produkt: ist das gewünschte Ergebnis des Bauvorgangs 
+
+## Implementierung 
+Bei der Implementierung orientiere ich mich stark an einem Beispiel, welches als Direktor den `LayoutManager`, als Erbauer den `WidgetManager`, als konkrete Erbauer die Klassen `BorderLayoutWidgetManager`,  `BoxLayoutWidgetManager`  und `FlowLayoutWidgetManager` und als Produkt, das Ergebnis die Klasse `HTMLPage`.
+
+Das Ziel ist es (man kann den LayoutManager auch als Singleton implementieren) einen LayoutManager zu haben, der sich um die Konstruktion der HTMLPage kümmert. Dazu hält er das Material, Daten oder in diesem Fall Wigets die er auszulegen hat. Ich als Client der Anwendung möchte ihm mitteilen, wie er diese Widgets auszulegen hat und sage ihm, welchen `WidgetManager` er zu nutzen hat. Dieser weiß genau wie er den HTMLCode zu gernerieren hat um die Widgets gewünscht auszulegen, damit der allgemeine LayoutManager diese als Paket/Baustein weiterverarbteien kann, in diesem Fall zeigt er nur diese Widgets an. Damit hält der Direktor die Daten, konstruiert mit dem konkreten Erbauer das Produkt und ist gleichzeitig auch der Abnehmer des Produktes. Implementiert sieht es circa wie folgt aus:
+```
+# Direktor 
+class LayoutManager():
+    def __init__(self, widgets) -> None:
+        self.htmlPage = HTMLPage()
+        self.widgets = widgets
+
+    def doLayout(self, widgetManager):
+        widgetManager.addWidgets(self.widgets)
+        widgetManager.render()
+        self.htmlPage = widgetManager.getHtmlPage()
+
+    def addWidget(self, widget):
+        self.widgets.append(widget)
+    
+    def addWidgets(self, widgets):
+        self.widgets.append(widgets)
+
+    def printHtmlCode(self):
+        print(self.htmlPage)
+
+# Abstrakter Erbauer 
+from abc import ABC, abstractmethod
+
+class WidgetManager(ABC):
+    def __init__(self):
+        self.htmlPage = HTMLPage()
+        self.widgets = []
+
+    @abstractmethod
+    def getHtmlPage(self):
+        pass
+    
+    @abstractmethod
+    def addWidget(self, widget):
+        pass
+    
+    @abstractmethod
+    def addWidgets(self, widgets):
+        pass
+
+    @abstractmethod
+    def render(self):
+        pass
+
+    
+# Konkrete Erbauer
+
+class BorderLayoutWidgetManager(WidgetManager):
+    def __init__(self):
+        self.htmlPage = HTMLPage()
+        self.widgets = []
+        
+    def getHtmlPage(self):
+        return self.htmlPage
+    
+    def addWidget(self, widget):
+        self.widgets.append(widget)
+    
+    def addWidgets(self, widgets):
+        self.widgets.append(widgets)
+
+    def render(self):
+        self.getHtmlPage().htmlCode = self.renderHtmlFromWidgets()
+
+    def renderHtmlFromWidgets(self):
+        # render HtmlCode from widgets and return
+        return "<h1> Hello Widgtes <\h1>"
+    
+class BoxLayoutWidgetManager(WidgetManager):
+    def __init__(self):
+        self.htmlPage = HTMLPage()
+        self.widgets = []
+        
+    def getHtmlPage(self):
+        return self.htmlPage
+    
+    def addWidget(self, widget):
+        self.widgets.append(widget)
+    
+    def addWidgets(self, widgets):
+        self.widgets.append(widgets)
+
+    def render(self):
+        self.getHtmlPage().htmlCode = self.renderHtmlFromWidgets()
+
+    def renderHtmlFromWidgets(self):
+        # render HtmlCode from widgets and return
+        return "<h1> Hello Widgtes <\h1>"
+
+class FlowLayoutWidgetManager(WidgetManager):
+    pass
+
+# Produkt 
+
+class HTMLPage():
+    def __init__(self) -> None:
+        self.htmlCode = ""
+
+# LayoutManager könnte auch als Singleton implementiert sein, da es davon in meiner Anwendung nur einen gibt 
+# default sind 2 widgets im layout Manager 
+
+layoutManager = LayoutManager(["widget1", "widget2"])
+layoutManager.doLayout(BorderLayoutWidgetManager())
+
+# die ersten 2 sollen im BorderLayout Modus implementiert werden
+htmlPage = layoutManager.htmlPage
+
+# jetzt sollen 2 weitere hinzugefügt werden und das BoxLayout verwendet werden 
+layoutManager.addWidgets(["widget3", "widget4"])
+layoutManager.doLayout(BoxLayoutWidgetManager())
+
+htmlPage = layoutManager.htmlPage
+```
+
+### Überlegungen
+Dieses Muster ist wie eingangs schon erwähnt sehr von Nutzen wenn viele Überladungen des Konstruktors existieren. Hier in diesem Fall wäre das der WidgetManager (besser wahrscheinlich WidgetLayoutManager genannt) welcher seine überladenen Konstruktoren in verschieden Unterklassen aufgeteilt und so auch die verschiedene Funktionalität zur Erstellung der verschiedenen Layouts. 
 
