@@ -19,11 +19,11 @@ Dieses Muster führt zu den folgenden Vorteilen:
 
 Bilderbuch Beispiel: 
 -
-Eine abstrakte Mahlzeit(Produkt), ein abstraktes Kellner(Erzeuger).
+Eine abstrakte Mahlzeit(Produkt), ein abstrakter Kellner(Erzeuger).
 Die Mahlzeit hat Eigenschaften wie Kalorien, Name, ...
 Der Kellner hat die Eigenschaft mahlzeit und die Methoden Aufnehmen(), Liefern() und Zubereiten(), wobei dabei die Methode Zubereiten() die abstrakte Factorymethode ist. Von der abstrakten Klasse Mahlzeit erben wir nun die Klassen Pizza und Bratwurst ab. Von der abstrakten Klasse Kellner leiten wir die Klassen PizzeriaKellner und BratwurstKellner ab, welche deren eigene Zubereiten() implementieren. Jetzt können Instanzen der konkreten Kellner erstellt werden und gegen das Interface der abstrakten Klasse Kellner implementiert werden. Egal ob ein PizzeriaKellner oder ein BratwurstKellner erstellt wird man kann deren Methoden Aufnehmen(), Zubereiten() und Liefern() aufrufen, ohne dabei konkreteres über deren Implementierung wissen zu müssen.
 
-**Da das obige Beispielnicht ganz realitätsnah ist und das auch nach längerer Recherche doch das naheliegendste war und zumal die Implementierung wie schon oben angedeutet oft Abgewandelt aussieht möchte ich unten noch ein anderes Beispiel anführen, welches auch anschließend in der Implementierung zu finden sein wird.**
+**Da das obige Beispiel nicht ganz realitätsnah ist und dies auch nach längerer Recherche doch das naheliegendste war und zumal die Implementierung wie schon oben angedeutet oft Abgewandelt aussieht möchte ich unten noch ein anderes Beispiel anführen, welches auch anschließend in der Implementierung zu finden sein wird.**
 
 Praxisnäheres Beispiel:
 -
@@ -34,9 +34,9 @@ Wir schreiben ein Framework zu Erstellung von SQL-Datenbank Connections. Die ein
 # Factory-Class-Beispiel
 
 # Connection-Klassen:
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
-class Database(ABC):
+class Database():
     def __init__(self, path):
         self.path = path
         self.conn()
@@ -111,15 +111,15 @@ Bei diesem Entwurfsmuster ist es schwer das ursprüngliche Konzept in der Praxis
 
 ## Singleton 
 ### Überblick 
-Zweck dieses Musters ist es sicherzustellne, dass in einer Anwendung immer nur ein Object dieser Klasse initialisiert wird. Dazu wird in Java ähnlichen Programmiersprachen einfach der Initializer bzw. Konstruktor mit dem Keyword private versehen, wodurch die Klasse nur innerhalb der Klasse initialisiert werden kann. Um dennoch die Funktionen der Klasse nutzen zu können, wird eine statische Eigenschaft Klasse mit dem einem Object des eigenen Typs initialisiert. Danach kann über die statische Eigenschaft auf alle public Methoden und Eigenschaften der Klasse zugegriffen werden, allerdings keine zusätzliche Instanz erzeugt werden.
+Zweck dieses Musters ist es sicherzustellen, dass in einer Anwendung immer nur ein Object dieser Klasse initialisiert wird. Dazu wird in Java ähnlichen Programmiersprachen einfach der Initializer bzw. Konstruktor mit dem Keyword private versehen, wodurch die Klasse nur innerhalb der Klasse initialisiert werden kann. Um dennoch die Funktionen der Klasse nutzen zu können, wird eine statische Eigenschaft der Klasse mit dem einem Object des eigenen Typs initialisiert. Danach kann über die statische Eigenschaft auf alle public Methoden und Eigenschaften der Klasse zugegriffen werden, allerdings keine zusätzliche Instanz erzeugt werden.
 ### Implementierung 
-Die Implementierung in Python weidst einige Hürden auf, zumal es keine Schlüsselwörter wie private gibt, die einen Konstruktor von außen unzugänglich machen könnten. Weiters kann man den Konstruktor auch nicht mit der in Python eigenen private Nomenklatur, dem "__" vesehen, da dieser sowieso private ist und vom Interpreter selbst nach der Erzeugung eines Objects aufgerufen wird. 
+Die Implementierung in Python weist einige Hürden auf, zumal es keine Schlüsselwörter wie private gibt, die einen Konstruktor von außen unzugänglich machen könnten. Weiters kann man den Konstruktor auch nicht mit der in Python eigenen private Nomenklatur, dem "__" vesehen, da dieser sowieso private ist und vom Interpreter selbst nach der Erzeugung eines Objects aufgerufen wird. 
 
 Um das Singelton Muster umzusetzen kommt die statische `__new__` Methode ins Spiel welche bei jeder Object Erstellung einer Class aufgerufen wird. Sie weist die folgende Signatur auf:
 
 `object.__new__(class, *args, **kwargs)`
 
-Die Übergabeparameter sind an die des Initialisers anzupassen. 
+Die Übergabeparameter sind an die des Initialisers/Konstruktors anzupassen. 
 
 > Initilaisieren wir ein Beispielobjekt wie folgt,  `Person('John')` so werden eigentlich folgende Methoden aufgerufen: 
 
@@ -167,9 +167,9 @@ Implemntieren wir dieses Verhalten zum Beispiel bei einer Klasse `class Auto():`
 Das Multiton ist eine Abwandlung des Singletons, was aus dem Namen schon klar wird. Wieder ist es Ziel die Anzahl der erzeugten Instanzen zu kontrollieren und deren Anzahl zu begrenzen. Die Begrenzung auf genau eine Instanz, wie beim Singleton ist oft nicht ausreichend.
 
 ### Implementierung
-Man stelle sich eine Application vor, die auf eine Datenbank zugreifen möchte. Eine einzige Verbindung, wäre zu wenig und für jeden Zugriff eine neue Verbindung zu erstellen wäre aufgrund des Zeitaufwandes für die Connection sehr unperformant. Deswegen stellen wir mit unserem Multiton-Objekt einen Pool von 10 Datenbank-Verbindungen zur Verfügung. Dazu wird ein Array unserer Instanzen gehalten, welche die maximale Anzahl nicht überschreiten darf. 
+Man stelle sich eine Application vor, die auf eine Datenbank zugreifen möchte. Eine einzige Verbindung, wäre zu wenig und für jeden Zugriff eine neue Verbindung zu erstellen wäre aufgrund des Zeitaufwandes für die Connection sehr inperformant. Deswegen stellen wir mit unserem Multiton-Objekt einen Pool von zB 3 Datenbank-Verbindungen zur Verfügung. Dazu wird ein Array unserer Instanzen gehalten, welche die maximale Anzahl nicht überschreiten darf. 
 
-In der unteren Darstellung wurde das Design Pattern des Multitons aufs 2 verschiedene Weisen implemntiert. Einmal mit einer Factory Class die den Überblick über unsere Connections hät und das Locking managed. Diese Implemntierung ist voll funktionsfähig und funktioniert wir gewollt. 
+In der unteren Darstellung wurde das Design Pattern des Multitons aufs 2 verschiedene Weisen implementiert. Einmal mit einer Factory Class die den Überblick über unsere Connections hät und das Locking managed. Diese Implemntierung ist voll funktionsfähig und funktioniert wie gewollt. 
 
 ```
 #########################################################
@@ -236,17 +236,21 @@ print(db1, db2, db3, db4)
 # <__main__.DatabaseConnection object at 0x100d5ef70>
 ```
 
-Die zweite Implementierung ist leider nicht in der Lage ungelockte Instanzen wieder zu verwenden, und löscht diese einfach, was den Vorteil der Zeitersparnis von der Erstellung neuer Connections zunichte macht und die lock Eigenschafz völlig überflüssig. Außerdem ist sie nicht so elegant und verständlich und was nicht elegant und einfach funktioniert ist meistens auch nicht gut zu warten und hat in Programmen nichts verloren. Dennoch stellt es eine Möglichkeit dar mit der `__new__` Methode, wie auch schon beim Singleton, die Anzahl der Instanzen zu kontrollieren.
+Die zweite Implementierung ist leider etwas hacky und nicht ganz verständlich, und zusätzlich nicht vollständig getestet also ohne Gewährleistung ob diese Methode die Refernzen auch richtig beibehält. Außerdem ist sie nicht so elegant und verständlich und was nicht elegant und einfach funktioniert ist meistens auch nicht gut zu warten und hat in Programmen nichts verloren. Dennoch stellt es eine Möglichkeit dar mit der `__new__` Methode, wie auch schon beim Singleton, die Anzahl der Instanzen zu kontrollieren.
 
 ```
-#########################################################
+########################################################
 #           Implmentierung mit __new__                  #
 # folgende Ausführung ist nicht ganz funktionsfühig     #
 #########################################################
 class DatabaseConn():
     instances = []
     def __new__(cls, path, user, key):
-        # check if connections can be created
+        #check if unlocked connection is available
+        for instance in cls.instances:
+            if instance.lock == False:
+                return instance
+        # check if connections can be created   
         if len(cls.instances) < 3:
             obj = super().__new__(cls)
             return obj
@@ -254,6 +258,11 @@ class DatabaseConn():
             return None
         
     def __init__(self, path, user, key):
+        #check if self already exists
+        if self in type(self).instances: 
+            self.lock = True
+            return
+        
         self.path = path
         self.user = user
         self.key = key
@@ -263,7 +272,7 @@ class DatabaseConn():
     def discard(self):
         for (index, instance) in enumerate(type(self).instances):
             if instance == self: 
-                del type(self).instances[index]            
+                type(self).instances[index].lock = False           
 
 
 db1 = DatabaseConn("path", "user", "key")
@@ -274,18 +283,72 @@ db4 = DatabaseConn("path", "user", "key")
 print(db1.lock, db2.lock, db3.lock, db4)
 
 ##close the second one and open a 4th
-db2.discard()
-db2 = None
+db2.discard() # setzt lock auf false und macht connection frei 
+# Referenz sollte aufgelöst werden aber unten sieht man das db2 gleich db4 ist
+# d2 = None 
+
 db4 = DatabaseConn("path", "user", "key")
 
-print(db1.lock, db2, db3.lock, db4.lock)
+print(db1.lock, db2, db3.lock, db4)
+
 ```
 
 printet folgende Ausgabe: 
 
 ```
 True True True None
-True None True True
+
+True <__main__.DatabaseConn object at 0x1049c2eb0> True <__main__.DatabaseConn object at 0x1049c2eb0>
+```
+
+Hier noch mal in abstrahierter Form:
+```
+# Abstrahierte Multiton Basisklasse
+class Multiton():
+    instances = []
+    def __new__(cls):
+        #check if unlocked connection is available
+        for instance in cls.instances:
+            if instance.lock == False:
+                return instance
+        # check if connections can be created   
+        if len(cls.instances) < 3: # Anzahl vielleicht global mit einem ALIAS/DEFINE definieren
+            obj = super().__new__(cls)
+            return obj
+        else: 
+            return None
+        
+    def __init__(self):
+        #check if self already exists
+        if self in type(self).instances: 
+            self.lock = True
+            return
+        self.lock = True
+        type(self).instances.append(self)
+        
+    def discard(self):
+        for (index, instance) in enumerate(type(self).instances):
+            if instance == self: 
+                type(self).instances[index].lock = False
+
+m1 = Multiton()
+m2 = Multiton()
+m3 = Multiton()
+m4 = Multiton()
+
+print(m1, m2, m3, m4)
+
+m1.discard()
+m1 = None 
+
+m4 = Multiton()
+print(m1, m2, m3, m4)
+```
+führt zu Output, wo man sehen kann dass m1 zuerst die selbe Signatur hat wie m4 danach: 
+```
+<__main__.Multiton object at 0x100e9ed90> <__main__.Multiton object at 0x100e9ed30> <__main__.Multiton object at 0x100e9ecd0> None
+
+None <__main__.Multiton object at 0x100e9ed30> <__main__.Multiton object at 0x100e9ecd0> <__main__.Multiton object at 0x100e9ed90>
 ```
 ### Hürden/Abgrenzungen 
 Es ist wieder schwer dies über eine statische Methode zu implementieren, da das verhalten eines privaten Konstruktors nicht einfach umzusetzen ist. 
@@ -295,11 +358,11 @@ Es ist wieder schwer dies über eine statische Methode zu implementieren, da das
 Die Erbauer Klasse ist sinnvoll zu implementieren, sollten wir viele Überladungen des Konstruktors einer bestimmten Klasse haben. Ziel dieses Musters ist es Daten nach und nach hinzuzufügen und aus diesen anschließend ein Produkt zu bauen. Dazu werden folgende Akteure verwendet:
 
 - Direktor: ist für die Konstruktion des Produkts zuständig und hält die Daten
-- Erbauer: ist für die Umsetzung der Konstruktion verantwortlich und wird als abstrakte Basisklasse implemntiert
-- Konkreter Erbauer: ist für die konkrete Umsetzung der Konstruktion verantwortlich
+- Erbauer: ist für die Umsetzung der Konstruktion verantwortlich und wird als abstrakte Basisklasse implementiert welche eine abstrakte Methode "erbaue" in dem Fall `render` aufweist
+- Konkreter Erbauer: ist für die konkrete Umsetzung der Konstruktion verantwortlich und implementiert die `render` Methode
 - Produkt: ist das gewünschte Ergebnis des Bauvorgangs 
 
-## Implementierung 
+### Implementierung 
 Bei der Implementierung orientiere ich mich stark an einem Beispiel, welches als Direktor den `LayoutManager`, als Erbauer den `WidgetManager`, als konkrete Erbauer die Klassen `BorderLayoutWidgetManager`,  `BoxLayoutWidgetManager`  und `FlowLayoutWidgetManager` und als Produkt, das Ergebnis die Klasse `HTMLPage`.
 
 Das Ziel ist es (man kann den LayoutManager auch als Singleton implementieren) einen LayoutManager zu haben, der sich um die Konstruktion der HTMLPage kümmert. Dazu hält er das Material, Daten oder in diesem Fall Wigets die er auszulegen hat. Ich als Client der Anwendung möchte ihm mitteilen, wie er diese Widgets auszulegen hat und sage ihm, welchen `WidgetManager` er zu nutzen hat. Dieser weiß genau wie er den HTMLCode zu gernerieren hat um die Widgets gewünscht auszulegen, damit der allgemeine LayoutManager diese als Paket/Baustein weiterverarbteien kann, in diesem Fall zeigt er nur diese Widgets an. Damit hält der Direktor die Daten, konstruiert mit dem konkreten Erbauer das Produkt und ist gleichzeitig auch der Abnehmer des Produktes. Implementiert sieht es circa wie folgt aus:
@@ -370,7 +433,7 @@ class BorderLayoutWidgetManager(WidgetManager):
 
     def renderHtmlFromWidgets(self):
         # render HtmlCode from widgets and return
-        return "<h1> Hello Widgtes <\h1>"
+        return "<h1> Hello Widgtes im Border Layout <\h1>"
     
 class BoxLayoutWidgetManager(WidgetManager):
     def __init__(self):
@@ -391,7 +454,7 @@ class BoxLayoutWidgetManager(WidgetManager):
 
     def renderHtmlFromWidgets(self):
         # render HtmlCode from widgets and return
-        return "<h1> Hello Widgtes <\h1>"
+        return "<h1> Hello Widgtes im Box Layout <\h1>"
 
 class FlowLayoutWidgetManager(WidgetManager):
     pass
@@ -410,14 +473,19 @@ layoutManager.doLayout(BorderLayoutWidgetManager())
 
 # die ersten 2 sollen im BorderLayout Modus implementiert werden
 htmlPage = layoutManager.htmlPage
-
+print(htmlPage.htmlCode)
 # jetzt sollen 2 weitere hinzugefügt werden und das BoxLayout verwendet werden 
 layoutManager.addWidgets(["widget3", "widget4"])
 layoutManager.doLayout(BoxLayoutWidgetManager())
 
 htmlPage = layoutManager.htmlPage
+print(htmlPage.htmlCode)
 ```
-
+und der Output sieht wie folgt aus:
+```
+<h1> Hello Widgtes im Border Layout <\h1>
+<h1> Hello Widgtes im Box Layout <\h1>
+```
 ### Überlegungen
-Dieses Muster ist wie eingangs schon erwähnt sehr von Nutzen wenn viele Überladungen des Konstruktors existieren. Hier in diesem Fall wäre das der WidgetManager (besser wahrscheinlich WidgetLayoutManager genannt) welcher seine überladenen Konstruktoren in verschieden Unterklassen aufgeteilt und so auch die verschiedene Funktionalität zur Erstellung der verschiedenen Layouts. 
+Dieses Muster ist wie eingangs schon erwähnt sehr von Nutzen wenn viele Überladungen des Konstruktors existieren. Hier in diesem Fall wäre das der WidgetManager (besser wahrscheinlich WidgetLayoutManager genannt) welcher seine überladenen Konstruktoren in verschieden Unterklassen aufgeteilt, und so auch die verschiedene Funktionalität zur Erstellung der verschiedenen Layouts. 
 

@@ -64,7 +64,7 @@ class BorderLayoutWidgetManager(WidgetManager):
 
     def renderHtmlFromWidgets(self):
         # render HtmlCode from widgets and return
-        return "<h1> Hello Widgtes <\h1>"
+        return "<h1> Hello Widgtes im Border Layout <\h1>"
     
 class BoxLayoutWidgetManager(WidgetManager):
     def __init__(self):
@@ -85,7 +85,7 @@ class BoxLayoutWidgetManager(WidgetManager):
 
     def renderHtmlFromWidgets(self):
         # render HtmlCode from widgets and return
-        return "<h1> Hello Widgtes <\h1>"
+        return "<h1> Hello Widgtes im Box Layout <\h1>"
 
 class FlowLayoutWidgetManager(WidgetManager):
     pass
@@ -104,9 +104,10 @@ layoutManager.doLayout(BorderLayoutWidgetManager())
 
 # die ersten 2 sollen im BorderLayout Modus implementiert werden
 htmlPage = layoutManager.htmlPage
-
+print(htmlPage.htmlCode)
 # jetzt sollen 2 weitere hinzugefügt werden und das BoxLayout verwendet werden 
 layoutManager.addWidgets(["widget3", "widget4"])
 layoutManager.doLayout(BoxLayoutWidgetManager())
 
 htmlPage = layoutManager.htmlPage
+print(htmlPage.htmlCode)
